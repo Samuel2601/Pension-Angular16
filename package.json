@@ -24,7 +24,6 @@
     "@auth0/angular-jwt": "^5.0.2",
     "@flatfile/angular": "^3.1.1",
     "@flatfile/sdk": "^2.3.4",
-    "@ng-bootstrap/ng-bootstrap": "^10.0.0",
     "@ngtools/webpack": "^16.0.1",
     "@popperjs/core": "^2.11.7",
     "@types/file-saver": "^2.0.5",
