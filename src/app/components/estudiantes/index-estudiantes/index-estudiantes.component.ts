@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminService } from 'src/app/service/admin.service';
 
-import { FlatfileMethods, FlatfileResults, FlatfileSettings } from '@flatfile/angular';
+import {CompleteParams, FlatfileMethods   } from "@flatfile/angular";
 
 import{Flatfile} from "@flatfile/sdk"
 
@@ -21,7 +21,7 @@ declare var $: any;
 	templateUrl: './index-estudiantes.component.html',
 	styleUrls: ['./index-estudiantes.component.css'],
 })
-export class IndexEstudiantesComponent implements OnInit, FlatfileMethods {
+export class IndexEstudiantesComponent implements OnInit {
 	public estudiantes: Array<any> = [];
 	public estudiantes_const: Array<any> = [];
 	public token = localStorage.getItem('token');
@@ -149,7 +149,7 @@ export class IndexEstudiantesComponent implements OnInit, FlatfileMethods {
 	// 88440965-79d0-4d6e-a58d-3df7053ba6dd
 	licenseKey = '88440965-79d0-4d6e-a58d-3df7053ba6dd';
 
-	settings: FlatfileSettings = {
+	settings = {
 		type: 'estudiantepro',
 
 		fields: [
@@ -261,9 +261,9 @@ export class IndexEstudiantesComponent implements OnInit, FlatfileMethods {
 	// 2 produccion---- 049743df-0983-4d9d-9e83-beb35f411989
 	//12345
 	customer = { userId: '12345' };
-	onData(results: FlatfileResults): Promise<string> {
+	onData(results: CompleteParams): Promise<string> {
 		let errorState = false;
-		////console.log({results});
+		console.log(results);
 		//console.log(results.validData);
 
 		return new Promise((resolve, rejects) => {
@@ -271,7 +271,7 @@ export class IndexEstudiantesComponent implements OnInit, FlatfileMethods {
 				rejects('reject -this text is controlled by the end-user');
 				errorState = false;
 			} else {
-				this.subir = results.validData;
+				//this.subir = results.data;
 				//console.log(this.subir.length);
 				this.subir_estudiante();
 				resolve('Agregados con exito');

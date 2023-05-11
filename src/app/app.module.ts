@@ -1,4 +1,4 @@
-import { LOCALE_ID, NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule,NO_ERRORS_SCHEMA} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { routing } from './app.routing';
@@ -6,6 +6,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NgbModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxTinymceModule } from 'ngx-tinymce';
+
+import { CommonModule } from '@angular/common';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -37,7 +39,7 @@ import { IndexAdminComponent } from './components/administrativo/index-administr
 import { ForgotPasswordComponent } from './components/cuenta/forgot-password/forgot-password.component';
 import { NewPasswordComponent } from './components/cuenta/new-password/new-password.component';
 
-import { FlatfileAdapterModule } from '@flatfile/angular';
+//import { FlatfileAdapterModule } from '@flatfile/angular';
 
 import { MatTableExporterModule } from 'mat-table-exporter';
 import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table';
@@ -177,8 +179,9 @@ import { ProveedoresComponent } from './components/proveedores/proveedores.compo
 	],
 
 	imports: [
+		NgbModule,
+		CommonModule,
 		NgxFileDropModule,
-		FlatfileAdapterModule,
 		BrowserModule,
 		AppRoutingModule,
 		routing,
@@ -203,7 +206,7 @@ import { ProveedoresComponent } from './components/proveedores/proveedores.compo
 			//baseURL: '../../../assets/tinymce/',
 			baseURL: '//cdnjs.cloudflare.com/ajax/libs/tinymce/5.7.1/',
 		}),
-	],
+	],schemas: [NO_ERRORS_SCHEMA],
 	providers: [{ provide: LOCALE_ID, useValue: 'es' }],
 	bootstrap: [AppComponent],
 })
