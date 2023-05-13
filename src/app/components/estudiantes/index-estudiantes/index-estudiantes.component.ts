@@ -271,9 +271,10 @@ export class IndexEstudiantesComponent implements OnInit {
 				rejects('reject -this text is controlled by the end-user');
 				errorState = false;
 			} else {
+				console.log(results);
 				//this.subir = results.data;
 				//console.log(this.subir.length);
-				this.subir_estudiante();
+				//this.subir_estudiante();
 				resolve('Agregados con exito');
 			}
 		});

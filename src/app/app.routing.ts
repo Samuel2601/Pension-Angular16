@@ -32,8 +32,7 @@ import { ProveedoresComponent } from './components/proveedores/proveedores.compo
 const appRoute: Routes = [
 	{ path: '', redirectTo: 'login', pathMatch: 'full' },
 
-	{ path: 'egresos', component: EgresosComponent, canActivate: [AuthGuard] },
-	{ path: 'proveedores', component: ProveedoresComponent, canActivate: [AuthGuard] },
+	
 
 	{ path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
 	{ path: 'control', component: ControlComponent, canActivate: [AuthGuard] },
@@ -72,6 +71,8 @@ const appRoute: Routes = [
 		component: EditAdminComponent,
 		canActivate: [AuthGuard],
 	},
+	{ path: 'egresos', component: EgresosComponent, canActivate: [AuthGuard] },
+	{ path: 'proveedores', component: ProveedoresComponent, canActivate: [AuthGuard] },
 
 	{ path: 'documentos', component: IndexDocumentoComponent, canActivate: [AuthGuard] },
 	//{path: 'documentos/create', component: CreateDocumentoComponent, canActivate:[AuthGuard]},

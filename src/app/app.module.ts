@@ -100,9 +100,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ControlComponent } from './components/cuenta/control/control.component';
 import { EgresosComponent } from './components/egresos/egresos.component';
 import { ProveedoresComponent } from './components/proveedores/proveedores.component';
+import { ModalVincularEncabezadoComponent } from './components/modal-vincular-encabezado/modal-vincular-encabezado.component';
 
 //import {TableBasicExample} from './app/components/dashboard/dashboard.component';
-
 @NgModule({
 	exports: [
 		A11yModule,
@@ -176,6 +176,7 @@ import { ProveedoresComponent } from './components/proveedores/proveedores.compo
 		ControlComponent,
 		EgresosComponent,
 		ProveedoresComponent,
+  ModalVincularEncabezadoComponent,
 	],
 
 	imports: [
@@ -190,15 +191,7 @@ import { ProveedoresComponent } from './components/proveedores/proveedores.compo
 		NgbPaginationModule,
 		MatTableModule,
 		MatTableExporterModule,
-		BrowserModule,
-		FormsModule,
-		HttpClientModule,
-		MatNativeDateModule,
-		BrowserModule,
 		BrowserAnimationsModule,
-		FormsModule,
-		HttpClientModule,
-
 		MatNativeDateModule,
 		ReactiveFormsModule,
 
