@@ -435,7 +435,8 @@
 													>
 														PDF
 													</button>
-													<button
+													<!--
+<button
 														id="btnxlsxcash"
 														mat-button
 														(click)="exportarcash()"
@@ -443,7 +444,48 @@
 													>
 														CASH
 													</button>
+													-->
+													
+													<button type="button" class="btn btn-primary" data-toggle="modal"
+													[attr.data-target]="'#modalGenerarCash'">
+														CASH
+													  </button>
 												  </div>
+												</div>
+												<div class="modal fade" 
+													id="modalGenerarCash" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+													<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+															role="documentrubro"
+														>
+														<div class="modal-content">
+															<div class="modal-header">
+																Generar CASH
+															</div>
+															<div class="modal-body">
+																<div class="row">
+																	<label for="" > Selecciona los meses para generar el CASH </label>
+																	<select id="numcash" class="form-select form-select-sm" [(ngModel)]="mcash">
+																		<option selected>Selecciona un mes</option>
+																		<ng-container *ngFor="let mes of meses; let i = index">
+																			<option *ngIf="i+1<=10" [value]="i+1" >{{ ismeses(i) }} {{i+1}}</option>
+																		</ng-container>
+																	  
+																	  </select>
+																</div>
+																
+															</div>
+															<div class="modal-footer">
+
+																<button
+																  class="btn btn-primary"
+																  (click)="onCash()"
+																>
+																  Generar
+																</button>
+															  </div>
+														</div>
+														
+													</div>
 												</div>
 
 												<div class="table-responsive">
@@ -633,7 +675,7 @@
 																									  <button id="btncursos{{ ctpagos.label }}" type="button" class="btn btn-outline-primary" (click)="exportTable(ctpagos.label,ctpagos.genero)"><i class="fe fe-printer"> Impr.</i></button>
 																									 
 																								</th>
-																								<th>Rubros</th>
+																								<th  *ngIf="pagos_estudiante[0].detalle[11]">Rubros</th>
 																								<th>Matricula</th>
 																								<th>Mes 1</th>
 																								<th>Mes 2</th>
@@ -658,7 +700,8 @@
 																												<i>(Retirado)</i>
 																											</ng-container>
 																										</td>	
-																										<td><ng-container *ngIf="isNumber(item.detalle[11].valor) && item.detalle[11].valor>0">
+																										<td *ngIf="item.detalle[11]">
+																											<ng-container *ngIf="isNumber(item.detalle[11].valor) && item.detalle[11].valor>0">
 																											{{item.detalle[11].valor| number: '1.2'}}
 																										</ng-container>
 																										<ng-container *ngIf="!isNumber(item.detalle[11].valor)||item.detalle[11].valor<=0">
@@ -688,7 +731,7 @@
 																							<tfoot>
 																								<tr>
 																									<td colspan="2"> Total</td>
-																									<td> {{sumarrecuadado(11,ctpagos.label)| number: '1.2' }} </td>
+																									<td *ngIf="pagos_estudiante[0].detalle[11]"> {{sumarrecuadado(11,ctpagos.label)| number: '1.2' }} </td>
 																									<td> {{sumarrecuadado(0,ctpagos.label)| number: '1.2' }} </td>
 																									<td> {{sumarrecuadado(1,ctpagos.label)| number: '1.2' }} </td>
 																									<td> {{sumarrecuadado(2,ctpagos.label)| number: '1.2' }} </td>

@@ -8,6 +8,7 @@ import * as XlsxPopulate from 'xlsx-populate';
 import * as Papa from 'papaparse';
 import { ModalVincularEncabezadoComponent } from '../modal-vincular-encabezado/modal-vincular-encabezado.component';
 declare var $: any;
+declare var iziToast: any;
 export interface Proveedor {
   id: number;
   nombre: string;
@@ -32,6 +33,7 @@ export class ProveedoresComponent implements OnInit {
 	public pageSize:number = 8;
   public selectedPageSize=8;
   public collectionSize=0;
+  public token = localStorage.getItem('token');
   constructor(private _adminService: AdminService,private modalService: NgbModal) { 
    
   }
@@ -39,7 +41,22 @@ export class ProveedoresComponent implements OnInit {
   ngOnInit(): void {
   }
   guardarProveedor(){
-    
+    $('#modalGuardar').modal('hide');
+    $('#modalEsperar').modal('show');
+    this._adminService.agregar_proveedor(this.token,this.proveedores).subscribe(response=>{
+      if(response.message){
+        $('#modalEsperar').modal('hide');
+        iziToast.show({
+          title: 'Respuesta',
+          titleColor: '#20DE4F',
+          color: '#ADE6BB',
+          class: 'text-info',
+          position: 'topRight',
+          message: response.message,
+        });
+
+      }
+    });
   }
 
   onPageSizeChange(): void {
@@ -131,6 +148,8 @@ export class ProveedoresComponent implements OnInit {
     this.collectionSize=this.proveedores.length;
     if(this.proveedores_erro.length>0){
       $('#modalErrados').modal('show');
+    }else{
+      $('#modalGuardar').modal('show');
     }
     console.log("Validos",this.proveedores);
     console.log("Erroneos",this.proveedores_erro);

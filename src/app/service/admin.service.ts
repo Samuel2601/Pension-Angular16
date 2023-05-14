@@ -12,6 +12,13 @@ export class AdminService {
 	constructor(private _http: HttpClient) {
 		this.url = GLOBAL.url;
 	}
+	agregar_proveedor( token: any,data: any):Observable<any>{
+		let headers = new HttpHeaders({
+			'Content-Type': 'application/json',
+			Authorization: token,
+		});
+		return this._http.post(this.url + 'agregar_proveedor', data, { headers: headers });
+	}
 
 	getapitoken():Observable<any>{
 		return this._http.get('./assets/tokendigitalocean.json')

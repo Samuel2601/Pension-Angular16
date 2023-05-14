@@ -128,6 +128,17 @@ export class DashboardComponent implements OnInit {
 	public imagen: any;
 
 	public pagos_estudiante: Array<any> = [];
+	public idexpension = 0;
+	public auxbecares = 0;
+	public total_pagar = 0;
+	public condicion = '';
+	public detalles: any = {};
+	public pagopension: Array<any> = [];
+	public diciembre: any;
+	public p: any = [];
+	public arr_pagos: Array<any> = [];
+	public arr_becas: Array<any> = [];
+	public pensionesestudiantearmado: Array<any> = [];
 
 	constructor(private _adminService: AdminService) {}
 
@@ -607,7 +618,7 @@ export class DashboardComponent implements OnInit {
 			
 		
 			costomatricula = this.config[val].matricula;
-			if(this.actualizar_dashest==false){
+			if(this.actualizar_dashest==false&&this.active==0){
 				let sigu=true;
 				//console.log(localStorage.getItem('dia'));
 				if(localStorage.getItem('dia')){
@@ -688,6 +699,7 @@ export class DashboardComponent implements OnInit {
 				}
 				
 			}else{
+				this.actualizar_dashest=true;
 				this.armado_matriz(val,costosextrapagos,costopension,costomatricula);
 			}
 			
@@ -696,6 +708,17 @@ export class DashboardComponent implements OnInit {
 			
 
 		}
+	}
+	ismeses(numes){
+		var aux = new Date(this.config[this.active].anio_lectivo).getMonth();
+		aux=aux+numes;
+
+		if(aux==12){
+			aux=0
+		}else if(aux>12){
+			aux=aux-11
+		}
+		return this.meses[aux];
 	}
 	armado_matriz(val:any,costosextrapagos:any,costopension:any,costomatricula:any){
 		if(this.actualizar_dashest==true){
@@ -746,7 +769,7 @@ export class DashboardComponent implements OnInit {
 								}
 							}
 						});
-						//console.log(this.arr_becas);
+						console.log(this.arr_becas);
 						this._adminService.listar_pensiones_estudiantes_tienda(this.token,this.config[val].anio_lectivo).subscribe((response) => {
 							//console.log(response.data[109],response.data[1]);
 							this.penest = response.data.map((item:any)=>{
@@ -775,7 +798,7 @@ export class DashboardComponent implements OnInit {
 									num_mes_res:item.num_mes_res,
 								}
 							});
-						//	console.log(this.penest[0]);
+							console.log(this.penest);
 							if (this.penest != undefined) {
 								//Armado de matriz
 								this.penest.forEach((element: any) => {
@@ -801,81 +824,133 @@ export class DashboardComponent implements OnInit {
 									
 								});
 								//Conteo de Estudiantes
-								this.penest.forEach((element: any) => {							
-									if (element.idestudiante.estado == 'Activo' || element.idestudiante.estado == 'Activado') {
-										
-											let auxpagos = this.pagospension.find((elementpp:any)=>elementpp.label==element.curso + element.paralelo);
+								this.detalles = this.estudiantes;
+								this.pagos_estudiante= [];
+								
+								this.penest.forEach((elementpent: any) => {							
+									if (elementpent.idestudiante.estado != 'Desactivado') {
+										var f = elementpent.anio_lectivo;
+											let auxpagos = this.pagospension.find((elementpp:any)=>elementpp.label==elementpent.curso + elementpent.paralelo);
 											if(auxpagos!=undefined){
 												
-												if(element.idestudiante.genero=="Masculino"){
+												if(elementpent.idestudiante.genero=="Masculino"){
 													auxpagos.genero[0]++
-												}else if(element.idestudiante.genero=="Femenino"){
+												}else if(elementpent.idestudiante.genero=="Femenino"){
 													auxpagos.genero[1]++
 												}else{
 													auxpagos.genero[2]++
 												}
 												auxpagos.num = auxpagos.num + 1;
 												
-												if (element.condicion_beca == 'Si') {
-												
-														for (var i = 1; i <= this.nmt; i++) {
-															
-																if (this.arr_becas.find(elementbecas=>elementbecas.idpension._id==element._id&&elementbecas.etiqueta==(i).toString())!=undefined) {
-																	
-																	auxpagos.data[1] =  element.val_beca + auxpagos.data[1];
-																	this.porpagar = element.val_beca+this.porpagar;
-
-																} else {
-																	
-																	auxpagos.data[1] = this.config[val].pension+auxpagos.data[1];
-																	this.porpagar = this.config[val].pension+this.porpagar;
-																}	
+												this.pagopension = [];
+												for(var i=0;i<=10;i++){
+													let valor=0;
+													let porpagar=0
+													let tipo;
+													if(i==0){
+														if(costosextrapagos>0){
+															porpagar=costosextrapagos;
+															valor = 0;
+															tipo = 'rubro';
+															this.detalles.find((element:any)=>{
+																if(element.tipo>20&&element.idpension._id==elementpent._id){
+																	valor=valor+element.valor
+																	porpagar=porpagar-element.valor
+																}
+															});
+															this.pagopension.push({
+																date: "Rubro",
+																valor: valor,
+																tipo: tipo,
+																porpagar: porpagar,
+															});
+															this.porpagar+=porpagar;
+															this.pagado +=valor;
+															auxpagos.data[1]+=porpagar;
+															auxpagos.data[0]+= valor;
+														}
+														if(elementpent.condicion_beca != 'Si' || elementpent.paga_mat==0){
+															valor=0;
+															porpagar=this.config[this.active].matricula;
+															tipo=i;
+															this.detalles.find((element:any)=>{
+																if(element.tipo==0&&element.idpension._id==elementpent._id){
+																	valor=valor+element.valor
+																	porpagar=porpagar-element.valor
+																}
+															});
+															this.pagopension.push({
+																date: "Matricula",
+																valor: valor,
+																tipo: tipo,
+																porpagar: porpagar,
+															});
+															this.porpagar+=porpagar;
+															this.pagado +=valor;
+															auxpagos.data[1]+=porpagar;
+															auxpagos.data[0]+= valor;
+														}else{
+															porpagar=0;
+															valor=0;
+															this.pagopension.push({
+																date: "Matricula",
+																valor: 0,
+																tipo: 0,
+																porpagar: 0,
+															});
 														}
 
-														if (element.paga_mat == 0) {
-															
-															auxpagos.data[1] = costosextrapagos + this.config[val].matricula+auxpagos.data[1];
-															this.porpagar = this.config[val].matricula+costosextrapagos+this.porpagar;
+													}else{
+														valor=0;
+														porpagar=0;
+														tipo=i;
+														
+														if(elementpent.condicion_beca == 'Si'){
+															if (this.arr_becas.find(elementbecas=>elementbecas.idpension._id==elementpent._id&&elementbecas.etiqueta==(tipo).toString())!=undefined) {
+																porpagar = elementpent.val_beca;
+															} else {
+																porpagar = this.config[this.active].pension;
+															}
+														}else{
+															porpagar = this.config[this.active].pension;
 														}
-													
-												} else {
-														auxpagos.data[1] =
-															auxpagos.data[1] + costosextrapagos+
-															(this.nmt * this.config[val].pension) +
-															this.config[val].matricula;
 
-														this.porpagar = (this.nmt * this.config[val].pension) + costosextrapagos + this.config[val].matricula +this.porpagar;
+														this.detalles.find((element:any)=>{
+															if(element.tipo==tipo&&element.idpension._id==elementpent._id){
+																valor=valor+element.valor
+																porpagar=porpagar-element.valor
+															}
+														});
+														this.pagopension.push({
+															date: new Date(f).setMonth(new Date(f).getMonth() + i - 1),
+															valor: valor,
+															tipo: tipo,
+															porpagar: porpagar,
+														});
+
+														if(i<= this.nmt){
+															this.porpagar+=porpagar;
+															this.pagado +=valor;
+															auxpagos.data[1]+=porpagar;
+															auxpagos.data[0]+= valor;
+														}
+													}
 													
 												}
+												this.pagos_estudiante.push({
+													nombres: (elementpent.idestudiante.apellidos + ' ' + elementpent.idestudiante.nombres).toString(),
+													curso: elementpent.curso,
+													paralelo: elementpent.paralelo,
+													detalle: this.pagopension,
+													estado: elementpent.idestudiante.estado,
+													dni:elementpent.idestudiante.dni
+												});
+												
 											}
 											
 										
 									}
 								});
-								//Conteo de pagos
-								this.estudiantes.forEach((element) => {
-									if (element.tipo <= this.nmt || element.tipo>=25 && (element.pago.estado=="Registrado"||element.pago.estado=="Emitido")) {
-
-										if (
-											new Date(this.config[val].anio_lectivo).getTime() ==
-											new Date(element.idpension.anio_lectivo).getTime()
-										) {
-
-											let auxpagosd = this.pagospension.find((elementpp:any)=>elementpp.label==element.idpension.curso + element.idpension.paralelo);	
-											let estudiante_estado = this.penest.find((elementee:any)=>elementee.idestudiante._id==element.estudiante);
-											if(estudiante_estado.idestudiante.estado=='Desactivado'&& new Date(estudiante_estado.idestudiante.anio_desac).getTime() ==new Date(this.config[val].anio_lectivo).getTime()){
-												
-											}else{
-												auxpagosd.data[0] = auxpagosd.data[0] + element.valor;
-												auxpagosd.data[1] = auxpagosd.data[1] - element.valor;
-
-												this.pagado = this.pagado+element.valor;
-												this.porpagar = this.porpagar - element.valor;
-											}												
-										}
-									}
-								});
-	
 								this.cursos = this.cursos.sort(function (a: any, b: any) {
 									if (parseInt(a) > parseInt(b)) {
 										return 1;
@@ -1003,17 +1078,7 @@ export class DashboardComponent implements OnInit {
 		this.load_data_est = false;
 	}
 
-	public idexpension = 0;
-	public auxbecares = 0;
-	public total_pagar = 0;
-	public condicion = '';
-	public detalles: any = {};
-	public pagopension: Array<any> = [];
-	public diciembre: any;
-	public p: any = [];
-	public arr_pagos: Array<any> = [];
-	public arr_becas: Array<any> = [];
-	public pensionesestudiantearmado: Array<any> = [];
+
 	isNumber(val): boolean {
 		return typeof val === 'number';
 	}
@@ -1026,154 +1091,7 @@ export class DashboardComponent implements OnInit {
 			
 
 		if(this.actualizar_dashest==true){
-			this.pagos_estudiante= [];
-			//console.log(this.pensionesestudiantearmado);
-			//console.log(this.detalles);
-			
-			this.pensionesestudiantearmado.forEach((elementpent: any, index: any) => {
-	
-				
-				/*this._adminService.obtener_becas_conf(elementpent._id, this.token)
-				.subscribe((response) => {
-					this.arr_becas=Object.assign(response.becas);*/
-	
-					this.idexpension = index;
-					var f = elementpent.anio_lectivo;
-					let auxtiempo=0;
-					if(elementpent.idestudiante.estado!="Desactivado"){
-						//console.log(elementpent.idestudiante)
-						//auxtiempo=new Date(elementpent.idestudiante.f_desac).getMonth()-new Date(elementpent.idestudiante.anio_desac).getMonth();
-					
-						auxtiempo=tiempo;
-						if(auxtiempo<0){
-							auxtiempo=0;
-						}
-	
-						if (elementpent.num_mes_beca != undefined) {
-							this.auxbecares = elementpent.num_mes_beca;
-						}
-						this.condicion = elementpent.condicion_beca;
-						if (this.detalles != undefined) {
-							this.pagopension = [];
-							let est;
-							let valor;
-							let idpago: any = [];
-							let tipo;
-							let rubro=0;
-							
-							
-								for (var j = 0; j <= tiempo+1; j++) {
-									
-									est = 'Sin Pago';
-									valor = 0;
-									idpago = undefined;
-									tipo = 'no';
-									idpago = [];
-									for (let k = 0; k < this.detalles.length; k++) {
-										if (j == this.detalles[k].tipo && this.detalles[k].idpension._id == elementpent._id) {
-											est = this.detalles[k].estado;
-											valor += this.detalles[k].valor;
-											idpago.push(this.detalles[k].pago);
-											tipo = this.detalles[k].tipo;
-										}else if(j>10&&this.detalles[k].tipo>11&&this.detalles[k].idpension._id == elementpent._id){
-											est = this.detalles[k].estado;
-											valor += this.detalles[k].valor;
-											idpago.push(this.detalles[k].pago);
-											tipo = this.detalles[k].tipo;
-											rubro=1;
-										}
-									}
-				
-									//this.p.push({ pago: idpago, tp: tipo });
-									if (j == 0) {
-										var porpagar = this.config[idxconfi].matricula - valor;
-										if (elementpent.paga_mat == 1) {
-											porpagar = 0;
-										}
-										this.pagopension.push({
-											date: 'Matricula',
-											estado: est,
-											valor: valor,
-											pago: idpago,
-											tipo: tipo,
-											porpagar: porpagar,
-										});
-									} else if(rubro==0){
-										var porpagar=0
-										
-											porpagar = this.config[idxconfi].pension - valor;
-										
-										var beca = 0;
-										
-										//console.log(elementpent.condicion_beca == 'Si');
-										if (elementpent.condicion_beca == 'Si') {
-											
-												this.arr_becas.forEach((elementbeca: any) => {
-													//console.log(tipo);
-													//console.log(elementbeca.etiqueta);
-													if ((tipo).toString()==(elementbeca.etiqueta).toString()) {
-														
-														porpagar = elementpent.val_beca - valor;
-														beca = 1;
-													}
-													//console.log(beca);
-												});
-											
-											
-										}
-										if(j>auxtiempo){
-											porpagar=0
-										}
-										//console.log(beca);
-										this.pagopension.push({
-											date: new Date(f).setMonth(new Date(f).getMonth() + j - 1),
-											estado: est,
-											valor: valor,
-											pago: idpago,
-											tipo: tipo,
-											porpagar: porpagar,
-											beca: beca,
-										});
-									}else{
-										
-										var porpagar = costosextrapagos - valor;
-										if(j>auxtiempo){
-											porpagar=0
-										}
-										this.pagopension.push({
-											date: "Rubro",
-											estado: est,
-											valor: valor,
-											pago: idpago,
-											tipo: tipo,
-											porpagar: porpagar,
-											beca: beca,
-										});
-									}
-								}
-							
-							
-			
-						}
-						
-							this.pagos_estudiante.push({
-								nombres: (elementpent.idestudiante.apellidos + ' ' + elementpent.idestudiante.nombres).toString(),
-								curso: elementpent.curso,
-								paralelo: elementpent.paralelo,
-								detalle: this.pagopension,
-								estado: elementpent.idestudiante.estado,
-								dni:elementpent.idestudiante.dni
-							});
-						
-						
-						
-					
-					}
 
-
-				});
-				
-			///});
 			
 			this.pagos_estudiante = this.pagos_estudiante.sort(function (a, b) {
 				if (parseInt(a.curso) > parseInt(b.curso)) {
@@ -1296,11 +1214,12 @@ export class DashboardComponent implements OnInit {
 	exportarcash(){
 		const json:any=[]
 		var j=1;
+		console.log(this.pagos_estudiante);
 		this.pagos_estudiante.forEach((element:any) => {
 			if(this.sumarcash(element.detalle)>0 &&element.estado!='Desactivado'){
 				var auxsuma=this.sumarcash(element.detalle)
 				auxsuma= parseFloat((auxsuma).toFixed(2))*100
-				json.push({'Item':j,'Ref':'CO','Cedula':element.dni,'Modena':'USD','Valor':auxsuma,'Ref1':'REC','Ref2':'','Ref3':'','Concepto':'PENSION DE '+ (this.meses[ new Date(new Date(this.fbeca).setMonth( new Date(this.fbeca).getMonth()+this.nmt-1)).getMonth()]).toUpperCase(),'Ref4':'C','Cedula2':element.dni,'Alumno':element.nombres});
+				json.push({'Item':j,'Ref':'CO','Cedula':element.dni,'Modena':'USD','Valor':auxsuma,'Ref1':'REC','Ref2':'','Ref3':'','Concepto':'PENSION DE '+ (this.meses[ new Date(new Date(this.fbeca).setMonth( new Date(this.fbeca).getMonth()+this.mcash-1)).getMonth()]).toUpperCase(),'Ref4':'C','Cedula2':element.dni,'Alumno':element.nombres});
 				j++;
 			}
 		});
@@ -1310,8 +1229,9 @@ export class DashboardComponent implements OnInit {
 		const workbook = { Sheets: { 'cash': worksheet }, SheetNames: ['cash'] };
 		const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
 		const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-		const fileName = 'cash_'+this.meses[new Date().getMonth()]+'_'+this.pdffecha+'.xlsx';
+		const fileName = 'cash_'+this.meses[new Date().getMonth()]+'_'+this.pdffecha+'('+this.mcash+').xlsx';
 		saveAs(blob, fileName); // La función saveAs es parte de la librería "file-saver", debes instalarla e importarla para que funcione.
+		$('#modalGenerarCash').modal('hide');
 	  }
 	  public auxdasboarestudiante: any = {};
 	guardardashboard_estudiante(){
@@ -1625,15 +1545,18 @@ export class DashboardComponent implements OnInit {
 		});
 		return suma
 	  }
+	  public mcash=0;
 	  sumarcash(valores:any){
 		var suma=0;
-		for(var i=0; i<=this.nmt;i++){
-			if(this.isNumber(valores[i].porpagar)){
-				suma=valores[i].porpagar+suma;
-			}
+		for(var i=0; i<=this.mcash+1;i++){
+			suma=valores[i].porpagar+suma;
 		}
 		return suma
 		}
+		onCash(): void {
+			this.mcash=Number(this.mcash);
+			this.exportarcash();
+		  }
 	  sumarrecuadado(indice:any, label:any){
 		var suma=0;
 		var aux=Object.assign(this.pagos_estudiante);

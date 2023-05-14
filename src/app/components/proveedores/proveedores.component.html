@@ -418,8 +418,7 @@
             </div>
           </div>
         </div>
-        <div
-          class="modal fade"
+        <div class="modal fade"
           id="modalErrados"
           style="display: none"
           aria-hidden="true"
@@ -447,6 +446,44 @@
                   (click)="descargar_correccion()"
                 >
                   Descargar archivo
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade"
+          id="modalGuardar"
+          style="display: none"
+          aria-hidden="true"
+        >
+          <div
+            class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+            role="documentrubro"
+          >
+            <div class="modal-content">
+              <div class="modal-header">
+                <!-- Title -->
+                <h4 class="card-header-title">
+                  Filas que coninciden: {{ proveedores.length }}
+                </h4>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                Deseas Guardar estos Proveedores? ({{ proveedores.length }})
+              </div>
+              <div class="modal-footer">
+
+                <button
+                  class="btn btn-primary"
+                  (click)="guardarProveedor()"
+                >
+                  Guardar Proveedores
                 </button>
               </div>
             </div>
@@ -547,6 +584,14 @@
                 </form>
               </div>
             </div>
+          </div>
+        </div>
+        <div class="modal fade" 
+          id="modalEsperar"
+          style="display: none"
+          aria-hidden="true">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
           </div>
         </div>
       </div>
