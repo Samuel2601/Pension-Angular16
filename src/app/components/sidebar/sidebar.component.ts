@@ -44,7 +44,7 @@ export class SidebarComponent implements OnInit {
 	buscar(){
 		this._adminService.getapitoken().subscribe(response=>{
 			//console.log(response);
-			this._adminService.conec_api('dop_v1_801cc801902377e375b1c2e97b6db4003f8973c80b2973285e6773cf2925236e').subscribe(response=>{
+			this._adminService.conec_api('dop_v1_e8f497a1b7bf27b1354f40f252f5e7adb8826c769fced6a81a337f41a5bc9af9').subscribe(response=>{
 				console.log(response);
 				if(response){
 					this.pagos=response;

@@ -6,12 +6,26 @@ input:invalid {
     border: 2px solid black;
   }
 
-  div{
-    animation-delay: 1s;
+
+  .carousel-control-prev,
+  .carousel-control-next {
+    width: 30px; /* ajusta el ancho */
   }
-  table{
-    animation-delay: 1s;
+  
+  .carousel-control-prev {
+    left: -30px; /* ajusta la posición */
   }
-  canvas{
-    animation-delay: 1s;
+  
+  .carousel-control-next {
+    right: -30px; /* ajusta la posición */
+  }
+  
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    background-color: #333; /* ajusta el color de fondo */
+  }
+  
+  .carousel-control-prev-icon::before,
+  .carousel-control-next-icon::before {
+    content: ''; /* oculta el contenido predeterminado */
   }

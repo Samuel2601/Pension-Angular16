@@ -22,12 +22,13 @@
         </div>
 
         <!-- Alert -->
-      
 
         <div class="card mb-3 mb-lg-5">
           <!-- Header -->
           <div class="card-header">
-            <div class="row justify-content-between align-items-center flex-grow-1">
+            <div
+              class="row justify-content-between align-items-center flex-grow-1"
+            >
               <div class="col-lg">
                 <div class="d-flex justify-content-between align-items-center">
                   <h4 class="card-header-title">Proveedores</h4>
@@ -50,29 +51,28 @@
                   <!-- End Datatable Info -->
                 </div>
               </div>
-            <div class="col-auto">
-              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button
-                  class="btn btn-primary"
-                  type="button"
-                  data-toggle="modal"
-                  [attr.data-target]="'#modalAddProv'"
-                >
-                  Añadir
-                </button>
-  
-                <button
-                  class="btn btn-primary"
-                  type="button"
-                  data-toggle="modal"
-                  [attr.data-target]="'#modalAddProvMasivo'"
-                >
-                  Añadir Masivo
-                </button>
+              <div class="col-auto">
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                  <button
+                    class="btn btn-primary"
+                    type="button"
+                    data-toggle="modal"
+                    [attr.data-target]="'#modalAddProv'"
+                  >
+                    Añadir
+                  </button>
+
+                  <button
+                    class="btn btn-primary"
+                    type="button"
+                    data-toggle="modal"
+                    [attr.data-target]="'#modalAddProvMasivo'"
+                  >
+                    Añadir Masivo
+                  </button>
+                </div>
               </div>
             </div>
-            
-           </div>
           </div>
           <!-- FILTROS:
           -->
@@ -196,7 +196,7 @@
                     role="row"
                     class="odd"
                     *ngFor="
-                      let proveedor of proveedores
+                      let proveedor of proveedor_arr
                         | slice
                           : (page - 1) * pageSize
                           : (page - 1) * pageSize + pageSize
@@ -247,7 +247,7 @@
                     </td>
                     <td>
                       <span class="legend-indicator bg-success"></span
-                      >Successful
+                      >{{ proveedor.estado }}
                     </td>
                     <td>{{ proveedor.ruc }}</td>
                     <td>{{ proveedor.direccion }}</td>
@@ -306,7 +306,7 @@
 
               <div class="col-sm-auto">
                 <ngb-pagination
-                  *ngIf="proveedores.length >= 1"
+                  *ngIf="proveedor_arr.length >= 1"
                   [(page)]="page"
                   [pageSize]="pageSize"
                   [maxSize]="10"
@@ -378,7 +378,7 @@
                                 class="row align-items-center"
                                 style="text-align: center"
                               >
-                              <div class="col"></div>
+                                <div class="col"></div>
                                 <div class="col">
                                   <img
                                     src="../../assets/img/df7da3c208654b4766e2.svg"
@@ -418,7 +418,8 @@
             </div>
           </div>
         </div>
-        <div class="modal fade"
+        <div
+          class="modal fade"
           id="modalErrados"
           style="display: none"
           aria-hidden="true"
@@ -452,7 +453,8 @@
           </div>
         </div>
 
-        <div class="modal fade"
+        <div
+          class="modal fade"
           id="modalGuardar"
           style="display: none"
           aria-hidden="true"
@@ -478,11 +480,7 @@
                 Deseas Guardar estos Proveedores? ({{ proveedores.length }})
               </div>
               <div class="modal-footer">
-
-                <button
-                  class="btn btn-primary"
-                  (click)="guardarProveedor()"
-                >
+                <button class="btn btn-primary" (click)="guardarProveedor()">
                   Guardar Proveedores
                 </button>
               </div>
@@ -507,7 +505,10 @@
                 <h4 class="card-header-title">Agregar nuevo Proveedor</h4>
               </div>
               <div class="modal-content">
-                <form (ngSubmit)="guardarProveedor()" #proveedorForm="ngForm">
+                <form
+                  (ngSubmit)="guardarProveedoruno()"
+                  #proveedorForm="ngForm"
+                >
                   <div class="card">
                     <div class="card-body">
                       <div>
@@ -519,6 +520,18 @@
                           id="nombre"
                           name="nombre"
                           [(ngModel)]="proveedor.nombre"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label class="form-label" for="nombre">Apellido:</label>
+
+                        <input
+                          class="form-control"
+                          type="text"
+                          id="nombre"
+                          name="nombre"
+                          [(ngModel)]="proveedor.apellido"
                           required
                         />
                       </div>
@@ -586,12 +599,25 @@
             </div>
           </div>
         </div>
-        <div class="modal fade" 
+        <div
+          class="modal fade"
           id="modalEsperar"
           style="display: none"
-          aria-hidden="true">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Cargando...</span>
+          aria-hidden="true"
+        >
+          <div
+            class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+            role="documentrubro"
+          >
+            <div class="modal-content">
+              <div class="row">
+                <div class="col-12 text-center">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

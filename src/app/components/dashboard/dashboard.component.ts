@@ -616,7 +616,7 @@ export class DashboardComponent implements OnInit {
 				});
 			}
 			
-		
+			this.generarMeses();
 			costomatricula = this.config[val].matricula;
 			if(this.actualizar_dashest==false&&this.active==0){
 				let sigu=true;
@@ -745,9 +745,7 @@ export class DashboardComponent implements OnInit {
 							_id:item.idpension._id,
 						},
 						pago :{
-							dni_factura:item.pago.dni_factura,
 							estado:item.pago.estado,
-							total_pagar:item.pago.total_pagar,
 							_id:item.pago._id,
 						},
 						tipo:item.tipo,
@@ -769,7 +767,6 @@ export class DashboardComponent implements OnInit {
 								}
 							}
 						});
-						console.log(this.arr_becas);
 						this._adminService.listar_pensiones_estudiantes_tienda(this.token,this.config[val].anio_lectivo).subscribe((response) => {
 							//console.log(response.data[109],response.data[1]);
 							this.penest = response.data.map((item:any)=>{
@@ -798,7 +795,6 @@ export class DashboardComponent implements OnInit {
 									num_mes_res:item.num_mes_res,
 								}
 							});
-							console.log(this.penest);
 							if (this.penest != undefined) {
 								//Armado de matriz
 								this.penest.forEach((element: any) => {
@@ -1035,24 +1031,27 @@ export class DashboardComponent implements OnInit {
 	}
 	cargar_canvas3(costosextrapagos:any){
 		
-		var canvas = <HTMLCanvasElement>document.getElementById('myChart3');
-		var ctx: CanvasRenderingContext2D | any;
-		ctx = canvas.getContext('2d');
-
-		this.myChart3 = new Chart(ctx, {
-			type: 'bar',
-			data: {
+		
+			const canvas = <HTMLCanvasElement>document.getElementById('myChart3');
+			const ctx = canvas.getContext('2d');
+			this.myChart3 = new Chart(ctx, {
+			  type: 'bar',
+			  data: {
 				labels: this.cursos,
-				datasets: [],
-			},
-			options: {
+				datasets: this.deteconomico,
+			  },
+			  options: {
 				scales: {
-					y: {
-						beginAtZero: true,
-					},
+				  y: {
+					beginAtZero: true,
+				  },
 				},
-			},
-		});
+			  },
+			});
+			this.myChart3.update();
+		
+
+		
 		if(this.actualizar_dashest==true){
 			this.pagospension = this.pagospension.sort(function (a: any, b: any) {
 				if (a.label > b.label) {
@@ -1067,15 +1066,16 @@ export class DashboardComponent implements OnInit {
 		}
 		
 
+		/*
 		this.deteconomico.forEach((element: any) => {
 			this.myChart3.data.datasets.push(element);
-		});
-
+		});*/
 		
 		//this.pagospension = this.pagospension;
 		this.armado(10, this.active,costosextrapagos);
-		this.myChart3.update();
+		
 		this.load_data_est = false;
+		
 	}
 
 
@@ -1092,38 +1092,20 @@ export class DashboardComponent implements OnInit {
 
 		if(this.actualizar_dashest==true){
 
-			
 			this.pagos_estudiante = this.pagos_estudiante.sort(function (a, b) {
-				if (parseInt(a.curso) > parseInt(b.curso)) {
-					return 1;
-				}
-				if (parseInt(a.curso) < parseInt(b.curso)) {
-					return -1;
-				}
-				// a must be equal to b
-				return 0;
-			});
-	
-			this.pagos_estudiante = this.pagos_estudiante.sort(function (a, b) {
-				if (parseInt(a.curso) + a.paralelo > parseInt(b.curso) + b.paralelo) {
-					return 1;
-				}
-				if (parseInt(a.curso) + a.paralelo < parseInt(b.curso) + b.paralelo) {
-					return -1;
-				}
-				// a must be equal to b
-				return 0;
-			});
-	
-			this.pagos_estudiante = this.pagos_estudiante.sort(function (a, b) {
-				if (parseInt(a.curso) + a.paralelo > parseInt(b.curso) + b.paralelo || a.nombres > b.nombres) {
-					return 1;
-				}
-				if (parseInt(a.curso) + a.paralelo < parseInt(b.curso) + b.paralelo || a.nombres < b.nombres) {
-					return -1;
-				}
-				// a must be equal to b
-				return 0;
+				if (parseInt(a.curso)< parseInt(b.curso) ) {
+					return -1; // a debe aparecer antes que b
+				  } else if (parseInt(a.curso)> parseInt(b.curso) ) {
+					return 1; // b debe aparecer antes que a
+				  } else {
+					if (a.paralelo < b.paralelo) {
+					  return -1; // a debe aparecer antes que b
+					} else if (a.paralelo > b.paralelo) {
+					  return 1; // b debe aparecer antes que a
+					} else {
+					  return 0; // a y b son iguales
+					}
+				  }
 			});
 			let contador=1,paralelo='';
 	
@@ -1151,7 +1133,17 @@ export class DashboardComponent implements OnInit {
 		
 
 	}
-	
+	public arr_meses=[];
+	generarMeses() {
+		this.arr_meses=[];
+		//const meses = [];
+		const anioActual = new Date(this.config[this.active].anio_lectivo).getMonth();
+		for (let i = 0; i < 10; i++) {
+		  const mes = new Date( new Date().setMonth(anioActual+i)).getMonth();
+		  this.arr_meses.push({ numero: i+1, nombre: this.meses[mes] });
+		}
+		//return meses;
+	  }
 	  
 
 	public retirados_arr:Retirado[]= [] ;
@@ -1247,6 +1239,7 @@ export class DashboardComponent implements OnInit {
 			
 			this.auxdasboarestudiante.dia=new Date();
 			this.auxdasboarestudiante.pagos_estudiante=this.pagos_estudiante;
+			console.log(this.estudiantes);
 			this.auxdasboarestudiante.estudiantes=this.estudiantes;
 			this.auxdasboarestudiante.arr_becas=this.arr_becas;
 			this.auxdasboarestudiante.penest=this.penest;
@@ -1327,6 +1320,8 @@ export class DashboardComponent implements OnInit {
 			document.getElementById('btncvs').style.display = 'none';
 			document.getElementById('btnxlsx').style.display = 'none';
 			document.getElementById('btnpdf').style.display = 'none';
+			document.getElementById('btncash').style.display = 'none';
+			document.getElementById('modalGenerarCash').style.display = 'none';
 	
 			document.getElementById('detalleeconomico').style.borderCollapse = 'collapse';
 			document.getElementById('detalleeconomico').style.width = '100%';
@@ -1355,6 +1350,9 @@ export class DashboardComponent implements OnInit {
 			document.getElementById('btncvs').style.display = '';
 			document.getElementById('btnxlsx').style.display = '';
 			document.getElementById('btnpdf').style.display = '';
+			
+			document.getElementById('btncash').style.display = '';
+			document.getElementById('modalGenerarCash').style.display = '';
 	
 			document.getElementById('detalleeconomico').style.borderCollapse = '';
 			document.getElementById('detalleeconomico').style.tableLayout = '';

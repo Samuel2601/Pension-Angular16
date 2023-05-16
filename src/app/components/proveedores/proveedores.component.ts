@@ -11,8 +11,11 @@ declare var $: any;
 declare var iziToast: any;
 export interface Proveedor {
   id: number;
-  nombre: string;
   direccion: string;
+  nombre: string;
+  apellido: string;
+  estado: string;
+  ruc: string;
   telefono: string;
   email: string;
 }
@@ -39,11 +42,38 @@ export class ProveedoresComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this._adminService.listar_proveedor(this.token).subscribe(response=>{
+      if(response.proveedores){
+        this.proveedor_arr=response.proveedores;
+        this.collectionSize=this.proveedor_arr.length;
+      }
+    });
   }
   guardarProveedor(){
     $('#modalGuardar').modal('hide');
     $('#modalEsperar').modal('show');
     this._adminService.agregar_proveedor(this.token,this.proveedores).subscribe(response=>{
+      if(response.message){        
+        iziToast.show({
+          title: 'Respuesta',
+          titleColor: '#20DE4F',
+          color: '#ADE6BB',
+          class: 'text-info',
+          position: 'topRight',
+          message: response.message,
+        });
+      }
+      $('#modalEsperar').modal('hide');
+    });
+  }
+  guardarProveedoruno(){
+    let pro: Array<any> = [];
+    
+    $('#modalAddProv').modal('hide');
+    $('#modalEsperar').modal('show');
+    pro.push(this.proveedor);
+    this.proveedor={};
+    this._adminService.agregar_proveedor(this.token,pro).subscribe(response=>{
       if(response.message){
         $('#modalEsperar').modal('hide');
         iziToast.show({
@@ -145,19 +175,24 @@ export class ProveedoresComponent implements OnInit {
     });
    
     $('#modalAddProvMasivo').modal('hide');
+
     this.collectionSize=this.proveedores.length;
+
     if(this.proveedores_erro.length>0){
       $('#modalErrados').modal('show');
     }else{
       $('#modalGuardar').modal('show');
     }
+
     console.log("Validos",this.proveedores);
     console.log("Erroneos",this.proveedores_erro);
   }
+
   descargar_correccion(){
     const worksheet = XLSX.utils.json_to_sheet(this.proveedores_erro);
       XLSX.writeFile({ SheetNames: ['Corregir'], Sheets: { 'Corregir': worksheet } }, 'datos.xlsx');
   }
+
   seleccionarArchivo() {
     document.getElementById('fileInput').click();
   }

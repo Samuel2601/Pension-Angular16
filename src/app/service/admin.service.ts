@@ -19,6 +19,13 @@ export class AdminService {
 		});
 		return this._http.post(this.url + 'agregar_proveedor', data, { headers: headers });
 	}
+	listar_proveedor( token: any):Observable<any>{
+		let headers = new HttpHeaders({
+			'Content-Type': 'application/json',
+			Authorization: token,
+		});
+		return this._http.get(this.url + 'listar_proveedor', { headers: headers });
+	}
 
 	getapitoken():Observable<any>{
 		return this._http.get('./assets/tokendigitalocean.json')
